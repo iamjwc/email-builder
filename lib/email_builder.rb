@@ -23,7 +23,7 @@ class EmailBuilder
   end
 
   class AttachmentStore < Array
-    def header(marker)
+    def header
       if empty?
         ""
       else
@@ -35,19 +35,23 @@ class EmailBuilder
       end
     end
 
-    def to_s(marker)
+    def to_s
       if empty?
         ""
       else
         s = ""
-        @attachments.each do |a|
+        self.each do |attachment|
           s += "--#{marker}\n"
-          s += a.to_s
+          s += attachment.to_s
         end
         s += "--#{marker}--\n"
 
         s
       end
+    end
+
+    def marker
+      @marker ||= Digest::SHA1.hexdigest(self.class.to_s + Time.now.to_i.to_s)
     end
   end
 
@@ -80,7 +84,7 @@ class EmailBuilder
       "MIME-Version: 1.0"
     ].join("\n") + "\n"
     
-    message += @attachments.header(marker)
+    message += @attachments.header
 
     message += [
       "Content-Type: #{TYPES[body_content_type]}",
@@ -88,14 +92,8 @@ class EmailBuilder
       "#{body}"
     ].join("\n") + "\n"
 
-    message += @attachments.to_s(marker)
+    message += @attachments.to_s
 
     message
-  end
-
-  protected
-
-  def marker
-    @marker ||= Digest::SHA1.hexdigest(self.class.to_s + Time.now.to_i.to_s)
   end
 end

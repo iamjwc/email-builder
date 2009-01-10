@@ -10,6 +10,11 @@ describe EmailBuilder do
     }
 
     @default_email = EmailBuilder.new(@defaults)
+
+    @attachments   = [
+      EmailBuilder::Attachment.new("file1.txt", "contents of the file"),
+      EmailBuilder::Attachment.new("file2.txt", "these are different file contents")
+    ]
   end
 
   describe "without attachments" do
@@ -23,6 +28,22 @@ describe EmailBuilder do
 
     it "should have blank line before body" do
       @default_email.to_s.split("\n")[-2].should == ""
+    end
+  end
+
+  describe "with attachments" do
+    before do
+      @attachments.each do |a|
+        @default_email.attach(a)
+      end
+    end
+
+    it "should have number of attachments + 3 occurances of the marker" do
+      regexp = /(#{@default_email.attachments.marker})/
+
+      matches = @default_email.to_s.split(regexp).select {|s| s =~ regexp }
+
+      matches.size.should == @default_email.attachments.size + 3
     end
   end
 end
