@@ -63,10 +63,17 @@ class EmailBuilder
   def initialize(opts)
     @attachments = AttachmentStore.new
     @body_content_type = :html
+    @to  = @to.split(",")  if @to.respond_to?  :split
+    @cc  = @cc.split(",")  if @cc.respond_to?  :split
+    @bcc = @bcc.split(",") if @bcc.respond_to? :split
 
     opts.each do |k, v|
       self.send("#{k}=", v) if self.respond_to?("#{k}=")
     end
+  end
+
+  def recipients
+    @to + @cc + @bcc
   end
 
   def attach(attachment)
@@ -76,9 +83,9 @@ class EmailBuilder
   def to_s
     message = [
       "From: #{from}",
-      "To: #{to}",
-      "CC: #{cc}",
-      "BCC: #{bcc}",
+      "To: #{[*to].join(",")}",
+      "CC: #{[*cc].join(",")}",
+      "BCC: #{[*bcc].join(",")}",
       "Subject: #{subject}",
       "Date: #{Time.now.rfc2822}",
       "MIME-Version: 1.0"
