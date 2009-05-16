@@ -74,7 +74,7 @@ class EmailBuilder
   end
 
   def recipients
-    [*@to] + [*@cc] + [*@bcc]
+    ([*@to] + [*@cc] + [*@bcc]).compact
   end
 
   def attach(attachment)
