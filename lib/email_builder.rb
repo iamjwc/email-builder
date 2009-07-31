@@ -11,8 +11,20 @@ class EmailBuilder
       @contents = contents
     end
 
+    def contentType(filename)
+      filename = File.basename(filename).downcase
+      if filename =~ /\.jp(e?)g$/ then return "image/jpg" end
+      if filename =~ /\.gif$/ then return "image/gif" end
+      if filename =~ /\.htm(l?)$/ then return "text/html" end
+      if filename =~ /\.txt$/ then return "text/plain" end
+      if filename =~ /\.zip$/ then return "application/zip" end
+      if filename =~ /\.pdf$/ then return "application/pdf" end
+      # more types?!
+      return "application/octet-stream"
+    end
+
     def to_s
-      s =  "Content-Type: multipart/mixed; name=\"#{@filename}\"\n"
+      s =  "Content-Type: " + contentType(@filename) + "; name=\"#{@filename}\"\n"
       s += "Content-Transfer-Encoding:base64\n"
       s += "Content-Disposition: attachment; filename=\"#{@filename}\"\n"
       s += "\n"
