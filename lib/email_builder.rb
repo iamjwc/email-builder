@@ -11,27 +11,27 @@ class EmailBuilder
       @contents = contents
     end
 
-    def content_type(filename)
-      case File.basename(filename).downcase
-      when /\.jp(e?)g$/ 
-        return "image/jpg" 
-      when /\.gif$/ 
-        return "image/gif" 
-      when /\.htm(l?)$/ 
-        return "text/html" 
-      when /\.txt$/ 
-        return "text/plain" 
-      when /\.zip$/ 
-        return "application/zip" 
-      when /\.pdf$/ 
-        return "application/pdf" 
+    def content_type
+      case File.basename(@filename).downcase
+      when /\.jp(e?)g$/
+        "image/jpg"
+      when /\.gif$/
+        "image/gif"
+      when /\.htm(l?)$/
+        "text/html"
+      when /\.txt$/
+        "text/plain"
+      when /\.zip$/
+        "application/zip"
+      when /\.pdf$/
+        "application/pdf"
+      else
+        "application/octet-stream"
       end
-      # more types?!
-      return "application/octet-stream"
     end
 
     def to_s
-      s =  "Content-Type: #{content_type(@filename)}; name=\"#{@filename}\"\n"
+      s =  "Content-Type: #{content_type}; name=\"#{@filename}\"\n"
       s += "Content-Transfer-Encoding:base64\n"
       s += "Content-Disposition: attachment; filename=\"#{@filename}\"\n"
       s += "\n"
