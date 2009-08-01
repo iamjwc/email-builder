@@ -45,6 +45,16 @@ describe EmailBuilder do
 
       matches.size.should == @default_email.attachments.size + 3
     end
+
+    it "should have 1 content type declarations (1 html, 1 multipart, 2 text)" do
+      matches = @default_email.to_s.scan(/Content-Type: ([a-z-]*\/[a-z-]*)/).flatten
+      matches.should == [
+        "multipart/mixed",
+        "text/html",
+        "text/plain",
+        "text/plain"
+      ]
+    end
   end
 end
 
